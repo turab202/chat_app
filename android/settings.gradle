@@ -1,21 +1,9 @@
 import java.util.Properties
 
 pluginManagement {
-    def flutterSdkPath = {
-        def properties = new Properties()
-        def localPropsFile = file("local.properties")
-        if (!localPropsFile.exists()) {
-            return null
-        }
-        localPropsFile.withInputStream { properties.load(it) }
-        return properties.getProperty("flutter.sdk")
-    }()
-
-    if (flutterSdkPath == null) {
-        throw new RuntimeException(
-            "Flutter SDK not found. Define location with flutter.sdk in the local.properties file."
-        )
-    }
+    def properties = new Properties()
+    file("local.properties").withInputStream { properties.load(it) }
+    def flutterSdkPath = properties.getProperty("flutter.sdk")
 
     includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
 
@@ -23,12 +11,18 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url "https://storage.googleapis.com/download.flutter.io" }
     }
+}
 
-    plugins {
-        id "org.jetbrains.kotlin.android" version "2.1.0"
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://storage.googleapis.com/download.flutter.io" }
     }
 }
 
 rootProject.name = "chat_app"
-include ":app"
+include(":app")
